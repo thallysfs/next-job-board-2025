@@ -1,0 +1,31 @@
+import type { Metadata } from "next";
+import "./globals.css";
+import { Montserrat } from "next/font/google"
+
+const montserrat = Montserrat({
+  subsets: ["latin"],
+  variable: "--font-montserrat",
+  display: "swap",
+  weight: ["400", "500", "600", "700"]
+})
+
+export const metadata: Metadata = {
+  title: "Next Job Board",
+  description: "Encontre seu próximo emprego",
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="en">
+      <body
+        className={`antialiased ${montserrat.className}`}
+      >
+        {children}
+      </body>
+    </html>
+  );
+}
