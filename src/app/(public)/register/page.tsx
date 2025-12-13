@@ -26,6 +26,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { userRoles } from "@/constants/index.ts"
+import { MoveLeft } from 'lucide-react'
 
 const formSchema = z.object({
   name: z.string().min(2, { message: "O nome precisa ter pelo menos dois caracteres" }),
@@ -59,7 +60,8 @@ function RegisterPage() {
           <h1 className="text-primary font-bold text-lg">
             Registre sua conta
           </h1>
-          <Button variant={'ghost'}>
+          <Button variant={'ghost'} className='flex items-center'>
+            <MoveLeft className='text-gray-500' />
             <Link href="/" className='text-xs'>Home</Link>
           </Button>
         </div>
