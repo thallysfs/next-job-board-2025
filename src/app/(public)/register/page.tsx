@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
-import React from 'react'
+import React, { useState } from 'react'
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
@@ -27,15 +27,21 @@ import {
 } from "@/components/ui/select"
 import { userRoles } from "@/constants/index.ts"
 import { MoveLeft } from 'lucide-react'
+import { registerUser } from '@/actions/users'
+import toast from 'react-hot-toast'
+import { useRouter } from 'next/navigation'
 
-const formSchema = z.object({
+const formSchema: any = z.object({
   name: z.string().min(2, { message: "O nome precisa ter pelo menos dois caracteres" }),
   email: z.email({ message: "E-mail inválido" }),
   password: z.string().min(6, { message: "A senha precisa ter pelo menos dois caracteres" }),
-  role: z.string().optional(),
+  role: z.string().min(1, { message: "Regra é obrigatória" })
 })
 
 function RegisterPage() {
+  const [loading, setLoading] = useState(false)
+  const router = useRouter()
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -47,10 +53,17 @@ function RegisterPage() {
   })
 
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values)
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    setLoading(true)
+    const response = await registerUser(values)
+
+    if (response.success) {
+      toast.success(response.message)
+      router.push("/login")
+    } else {
+      toast.error(response.message)
+    }
+    setLoading(false)
   }
 
   return (
@@ -145,7 +158,11 @@ function RegisterPage() {
             />
 
 
-            <Button type="submit" className='w-full mt-2'>Registrar</Button>
+            <Button type="submit" className='w-full mt-2'
+              disabled={loading}
+            >
+              {loading ? "Registrando..." : "Registrar"}
+            </Button>
 
             <div className='flex justify-center gap-1'>
               <h1 className='text-sm'>Já tem uma conta?</h1>

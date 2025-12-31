@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
-import React from 'react'
+import React, { useState } from 'react'
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
@@ -27,14 +27,19 @@ import {
 } from "@/components/ui/select"
 import { userRoles } from "@/constants/index.ts"
 import { MoveLeft } from 'lucide-react'
+import { loginUser } from '@/actions/users'
+import toast from 'react-hot-toast'
+import Cookie from "js-cookie"
 
-const formSchema = z.object({
+const formSchema: any = z.object({
   email: z.email({ message: "E-mail inválido" }),
   password: z.string().min(6, { message: "A senha precisa ter pelo menos dois caracteres" }),
   role: z.string().optional(),
 })
 
 function LoginPage() {
+  const [loading, setLoading] = useState(false)
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -45,10 +50,19 @@ function LoginPage() {
   })
 
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values)
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    setLoading(true)
+    const response: any = await loginUser(values)
+    if (response.success) {
+      toast.success("Login efetuado com sucesso")
+      const token = response.data
+      Cookie.set("token", token)
+      Cookie.set("role", values.role)
+
+    } else {
+      toast.error(response.message || "Login falhou")
+    }
+    setLoading(false)
   }
 
   return (
@@ -130,7 +144,9 @@ function LoginPage() {
             />
 
 
-            <Button type="submit" className='w-full mt-2'>Fazer Login</Button>
+            <Button type="submit" className='w-full mt-2' disabled={loading}>
+              {loading ? "loging..." : "Login"}
+            </Button>
 
             <div className='flex justify-center gap-1'>
               <h1 className='text-sm'>Não tem uma conta?</h1>
