@@ -30,6 +30,7 @@ import { MoveLeft } from 'lucide-react'
 import { loginUser } from '@/actions/users'
 import toast from 'react-hot-toast'
 import Cookie from "js-cookie"
+import { useRouter } from 'next/navigation'
 
 const formSchema: any = z.object({
   email: z.email({ message: "E-mail inválido" }),
@@ -38,6 +39,7 @@ const formSchema: any = z.object({
 })
 
 function LoginPage() {
+  const router = useRouter()
   const [loading, setLoading] = useState(false)
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -58,6 +60,7 @@ function LoginPage() {
       const token = response.data
       Cookie.set("token", token)
       Cookie.set("role", values.role)
+      router.push(`/${values.role}/dashboard`)
 
     } else {
       toast.error(response.message || "Login falhou")
