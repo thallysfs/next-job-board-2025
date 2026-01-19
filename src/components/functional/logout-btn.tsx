@@ -5,9 +5,9 @@ import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 
 function LogoutButton() {
+  const router = useRouter()
 
   const onLogout = () => {
-    const router = useRouter()
     Cookie.remove("token")
     Cookie.remove("role")
     toast.success("Saiu com sucesso!")
@@ -16,7 +16,7 @@ function LogoutButton() {
 
   return (
     <div>
-      <Button className='flex items-center gap-1'
+      <Button className='flex items-center gap-1 w-full'
         onClick={onLogout}
       >
         <LogOut size={15} />
