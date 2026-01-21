@@ -5,6 +5,7 @@ import toast from 'react-hot-toast'
 import useUsersStore, { IUsersStore } from '@/store/users-store'
 import Cookie from 'js-cookie'
 import { useRouter } from 'next/navigation'
+import Spinner from '@/components/ui/spinner'
 
 function PrivateLayout({ children }: { children: React.ReactNode }) {
   const { setUser } = useUsersStore() as IUsersStore
@@ -29,9 +30,9 @@ function PrivateLayout({ children }: { children: React.ReactNode }) {
   }, [])
 
   if (loading) {
-    <div className='flex justify-center items-center h-screen'>
-      Carregando...
-    </div>
+    return (
+      <Spinner />
+    )
   }
 
   return (
