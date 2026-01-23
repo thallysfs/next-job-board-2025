@@ -27,6 +27,10 @@ import { Button } from '../ui/button'
 import Editor, { DefaultEditor } from 'react-simple-wysiwyg'
 import { jobStatuses, jobTypes } from '@/constants/index.ts'
 import { X } from 'lucide-react'
+import { createJob } from '@/actions/jobs'
+import useUsersStore, { IUsersStore } from '@/store/users-store'
+import { useRouter } from 'next/navigation'
+import toast from 'react-hot-toast'
 
 
 const formSchema: any = z.object({
@@ -41,9 +45,12 @@ const formSchema: any = z.object({
   status: z.string().min(1, { message: "Status é obrigatório" }),
 })
 
-function JobForm() {
+function JobForm({ formType = 'add' }: { formType: 'add' | 'edit' }) {
   const [skillsAdded, setSkillsAdded] = useState<string[]>([])
   const [skillsInputValue, setSkillsInputValue] = useState("")
+  const [loading, setLoading] = useState(false)
+  const { user }: IUsersStore = useUsersStore() as IUsersStore
+  const router = useRouter()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -64,7 +71,29 @@ function JobForm() {
 
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      values.skills = skillsAdded
+      let response: any = null
 
+      if (formType === 'add') {
+        response = await createJob({
+          ...values,
+          recruiter_id: user?.id,
+        })
+        if (response.success) {
+          toast.success(response.message)
+          router.push("/recruiter/jobs")
+        } else {
+          toast.error(response.message)
+        }
+      }
+
+
+    } catch (error) {
+      toast.error("Aconteceu algo errado, tente novamente")
+    } finally {
+      setLoading(false)
+    }
   }
 
   const addSkillHandler = () => {
@@ -114,13 +143,14 @@ function JobForm() {
           {/* skills */}
           <div>
             <h1 className='text-sm'>Habilidades</h1>
-            <div className="flex gap-5">
+            <div className="flex gap-5 mt-1">
               <Input
                 placeholder='Entre com as habilidades separadas por vírgula'
                 value={skillsInputValue}
                 onChange={(e) => setSkillsInputValue(e.target.value)}
               />
               <Button
+                disabled={!skillsInputValue.trim().length}
                 type='button'
                 onClick={addSkillHandler}
               >
@@ -293,8 +323,8 @@ function JobForm() {
           </div>
 
           <div className="flex justify-end">
-            <Button type="submit" className='mt-2'>
-              Enviar
+            <Button type="submit" className='mt-2' disabled={loading}>
+              {formType === "add" ? "Adicionar Vaga" : "Atualizar Vaga"}
             </Button>
           </div>
 
