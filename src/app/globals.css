@@ -186,3 +186,7 @@
 .font-semibold {
   font-weight: 600 !important;
 }
+
+table {
+  border: 1px solid gray
+}
