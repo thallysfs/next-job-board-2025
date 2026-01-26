@@ -46,7 +46,7 @@ const formSchema: any = z.object({
 })
 
 function JobForm({ formType = 'add', initialValues }: { formType: 'add' | 'edit', initialValues?: any }) {
-  const [skillsAdded, setSkillsAdded] = useState<string[]>([])
+  const [skillsAdded, setSkillsAdded] = useState<string[]>(initialValues?.skills || [])
   const [skillsInputValue, setSkillsInputValue] = useState("")
   const [loading, setLoading] = useState(false)
   const { user }: IUsersStore = useUsersStore() as IUsersStore
@@ -56,15 +56,15 @@ function JobForm({ formType = 'add', initialValues }: { formType: 'add' | 'edit'
     resolver: zodResolver(formSchema),
     defaultValues: {
       defaultValues: {
-        title: "",
-        description: "",
-        location: "",
-        job_type: "",
-        min_salary: 0,
-        max_salary: 0,
-        exp_required: 0,
-        last_date_to_apply: "",
-        status: "",
+        title: initialValues?.title || "",
+        description: initialValues?.description || "",
+        location: initialValues?.location || "",
+        job_type: initialValues?.job_type || "",
+        min_salary: initialValues?.min_salary || 0,
+        max_salary: initialValues?.max_salary || 0,
+        exp_required: initialValues?.exp_required || 0,
+        last_date_to_apply: initialValues?.last_date_to_apply || "",
+        status: initialValues?.status || "",
       },
     },
   })
