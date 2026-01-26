@@ -26,4 +26,7 @@ export interface IJob {
   status: string;
   created_at: string;
   updated_at: string;
+
+  //runtime field
+  recruiter: IUser
 }

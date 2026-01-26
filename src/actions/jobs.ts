@@ -2,6 +2,7 @@
 
 import supabaseConfig from "@/config/supabase-config"
 import { IJob } from "@/interfaces"
+import { success } from "zod"
 
 export const createJob = async (payload: Partial<IJob>) => {
   try {
@@ -117,3 +118,27 @@ export const getJobsOfRecruiter = async (recruiterId: number) => {
     };
   }
 };
+
+export const getAllActiveJobs = async (filters: any) => {
+  try {
+    const jobsResponse = await supabaseConfig
+      .from("jobs")
+      .select("*, recruiter:user_profiles(name, id)")
+      .eq("status", "open")
+      .order("created_at", { ascending: false})
+
+    if(jobsResponse.error) {
+      throw new Error(jobsResponse.error.message)
+    }
+
+    return {
+      success: true,
+      data: jobsResponse.data
+    }
+  } catch (error) {
+    return {
+      success: false,
+      message: (error as Error).message 
+    }
+  }
+}
