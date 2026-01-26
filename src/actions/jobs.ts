@@ -29,7 +29,7 @@ export const getJobById = async (jobId: number) => {
   try {
     const jobResponse = await supabaseConfig
       .from("jobs")
-      .select("")
+      .select("*, recruiter:user_profiles(name, id)")
       .eq("id", jobId)
 
     if(jobResponse.error || jobResponse.data.length === 0) {
