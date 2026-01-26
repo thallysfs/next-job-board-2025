@@ -45,7 +45,7 @@ const formSchema: any = z.object({
   status: z.string().min(1, { message: "Status é obrigatório" }),
 })
 
-function JobForm({ formType = 'add' }: { formType: 'add' | 'edit' }) {
+function JobForm({ formType = 'add', initialValues }: { formType: 'add' | 'edit', initialValues?: any }) {
   const [skillsAdded, setSkillsAdded] = useState<string[]>([])
   const [skillsInputValue, setSkillsInputValue] = useState("")
   const [loading, setLoading] = useState(false)

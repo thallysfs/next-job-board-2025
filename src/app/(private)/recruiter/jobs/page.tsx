@@ -8,7 +8,7 @@ import InfoMessage from '@/components/ui/info-message'
 import Spinner from '@/components/ui/spinner'
 import { IJob } from '@/interfaces'
 import useUsersStore, { IUsersStore } from '@/store/users-store'
-import { Plus } from 'lucide-react'
+import { Edit, Eye, Plus, Trash } from 'lucide-react'
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import {
@@ -22,11 +22,14 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import dayjs from "dayjs"
+import { useRouter } from 'next/navigation'
+import { jobStatusesClasses } from '@/constants/index.ts'
 
 function RecruiterJobsPage() {
   const [jobs, setJobs] = useState<IJob[]>([])
   const [loading, setLoading] = useState<boolean>(true)
   const { user }: IUsersStore = useUsersStore() as IUsersStore
+  const router = useRouter()
 
   const fetchJobs = async () => {
     setLoading(true)
@@ -83,9 +86,27 @@ function RecruiterJobsPage() {
                   <TableCell>{job.location}</TableCell>
                   <TableCell>{job.job_type}</TableCell>
                   <TableCell>{dayjs(job.created_at).format('DD/MM/YYYY hh:mm A')}</TableCell>
-                  <TableCell>{job.status}</TableCell>
                   <TableCell>
-
+                    <div className={jobStatusesClasses[job.status]}>
+                      {job.status}
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex gap-5">
+                      <Button variant="outline" size="sm">
+                        <Eye size={14} />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => router.push(`/recruiter/jobs/edit/${job.id}`)}
+                      >
+                        <Edit size={14} />
+                      </Button>
+                      <Button variant="outline" size="sm">
+                        <Trash size={14} />
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}
