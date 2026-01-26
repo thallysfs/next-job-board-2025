@@ -53,7 +53,7 @@ export const getJobById = async (jobId: number) => {
 export const editJobById = async (jobId: number, payload: Partial<IJob>) => {
   try {
     const updateJob = await supabaseConfig
-      .from("job")
+      .from("jobs")
       .update(payload)
       .eq("id", jobId)
     

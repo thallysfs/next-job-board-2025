@@ -27,7 +27,7 @@ import { Button } from '../ui/button'
 import Editor, { DefaultEditor } from 'react-simple-wysiwyg'
 import { jobStatuses, jobTypes } from '@/constants/index.ts'
 import { X } from 'lucide-react'
-import { createJob } from '@/actions/jobs'
+import { createJob, editJobById } from '@/actions/jobs'
 import useUsersStore, { IUsersStore } from '@/store/users-store'
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
@@ -55,17 +55,15 @@ function JobForm({ formType = 'add', initialValues }: { formType: 'add' | 'edit'
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      defaultValues: {
-        title: initialValues?.title || "",
-        description: initialValues?.description || "",
-        location: initialValues?.location || "",
-        job_type: initialValues?.job_type || "",
-        min_salary: initialValues?.min_salary || 0,
-        max_salary: initialValues?.max_salary || 0,
-        exp_required: initialValues?.exp_required || 0,
-        last_date_to_apply: initialValues?.last_date_to_apply || "",
-        status: initialValues?.status || "",
-      },
+      title: initialValues?.title || "",
+      description: initialValues?.description || "",
+      location: initialValues?.location || "",
+      job_type: initialValues?.job_type || "",
+      min_salary: initialValues?.min_salary || 0,
+      max_salary: initialValues?.max_salary || 0,
+      exp_required: initialValues?.exp_required || 0,
+      last_date_to_apply: initialValues?.last_date_to_apply || "",
+      status: initialValues?.status || "",
     },
   })
 
@@ -80,14 +78,17 @@ function JobForm({ formType = 'add', initialValues }: { formType: 'add' | 'edit'
           ...values,
           recruiter_id: user?.id,
         })
-        if (response.success) {
-          toast.success(response.message)
-          router.push("/recruiter/jobs")
-        } else {
-          toast.error(response.message)
-        }
+      } else {
+        response = await editJobById(initialValues.id, { ...values, recruiter_id: user?.id! })
       }
 
+
+      if (response.success) {
+        toast.success(response.message)
+        router.push("/recruiter/jobs")
+      } else {
+        toast.error(response.message)
+      }
 
     } catch (error) {
       toast.error("Aconteceu algo errado, tente novamente")

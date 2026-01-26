@@ -1,7 +1,7 @@
 
 'use client'
 
-import { getJobsOfRecruiter } from '@/actions/jobs'
+import { deleteJobById, getJobsOfRecruiter } from '@/actions/jobs'
 import PageTitle from '@/components/functional/page-title'
 import { Button } from '@/components/ui/button'
 import InfoMessage from '@/components/ui/info-message'
@@ -24,6 +24,7 @@ import {
 import dayjs from "dayjs"
 import { useRouter } from 'next/navigation'
 import { jobStatusesClasses } from '@/constants/index.ts'
+import toast from 'react-hot-toast'
 
 function RecruiterJobsPage() {
   const [jobs, setJobs] = useState<IJob[]>([])
@@ -38,6 +39,17 @@ function RecruiterJobsPage() {
       setJobs(response.data)
     }
     setLoading(false)
+  }
+
+  const deleteJobHandler = async (jobId: number) => {
+    const response: any = await deleteJobById(jobId)
+
+    if (response.success) {
+      toast.success(response.message);
+      fetchJobs()
+    } else {
+      toast.error(response.message)
+    }
   }
 
   useEffect(() => {
@@ -103,7 +115,7 @@ function RecruiterJobsPage() {
                       >
                         <Edit size={14} />
                       </Button>
-                      <Button variant="outline" size="sm">
+                      <Button variant="outline" size="sm" onClick={() => deleteJobHandler(job.id)}>
                         <Trash size={14} />
                       </Button>
                     </div>
