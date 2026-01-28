@@ -1,4 +1,5 @@
 import { getJobById } from '@/actions/jobs'
+import ApplyJobSection from '@/components/functional/apply-job-section'
 import InfoMessage from '@/components/ui/info-message'
 import { IJob } from '@/interfaces'
 import dayjs from 'dayjs'
@@ -25,29 +26,28 @@ async function JobDetailsPage({ params }: JobDetailsPageProps) {
       <div>
         <div className="flex justify-between">
           <div>
-            <h1 className="text-sm font-bold text-gray-700">
-              {job.title}
+            <h1 className="text-xl font-bold text-gray-700">{job.title}</h1>
+            <h1 className="text-sm text-gray-500">
+              From : {job.recruiter.name}
             </h1>
-            <h1 className="text-xs text-gray-500">
-              De: {job.recruiter.name}
-            </h1>
-            <div className='h-max bg-blue-100 text-blue-600 border border-blue-600 px-2 py-1 rounded capitalize text-xs font-medium items-center'>
-              {job.job_type.replace("-", " ")}
-            </div>
-            <div className='flex flex-wrap'>
-              {job.skills.map((skill, index) => (
-                <div key={index} className='bg-gray-200 border border-gray-400 text-gray-700 px-2 py-1 rounded text-xs font-medium mr-2'>
-                  {skill}
-                </div>
-              ))}
-            </div>
           </div>
+          <div className="h-max bg-blue-100 text-blue-600 border border-blue-600 px-2 py-1 rounded capitalize text-xs font-medium items-center">
+            {job.job_type.replace("-", " ")}
+          </div>
+        </div>
+        <div className="flex flex-wrap mt-3">
+          {job.skills.map((skill, index) => (
+            <div
+              key={index}
+              className="bg-gray-200 border border-gray-400 text-gray-700 px-2 py-1 rounded text-xs font-medium mr-2 mb-2"
+            >
+              {skill}
+            </div>
+          ))}
         </div>
       </div>
 
-      <hr
-        className='border border-gray-300'
-      />
+      <hr className='border border-gray-300' />
 
       <div className="flex justify-between">
         <div className='flex items-center'>
@@ -66,12 +66,15 @@ async function JobDetailsPage({ params }: JobDetailsPageProps) {
         </div>
       </div>
 
-      <div className="grid grid-cols-3">
+      <div className="grid grid-cols-3 gap-5">
         <div className="col-span-2 border border-gray-300 p-5 rounded-xl">
           <p
-            className='text-gray-700 whitespace-pre-line text-sm'
+            className='text-sm wysiwyg-content'
             dangerouslySetInnerHTML={{ __html: job.description }}
           ></p>
+        </div>
+        <div className="col-span-1">
+          <ApplyJobSection job={job} />
         </div>
       </div>
     </div>

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import "./text-editor.css"
 import { Montserrat } from "next/font/google"
 import { Toaster } from "react-hot-toast";
 import CustomLayout from "@/custom-layout";
